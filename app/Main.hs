@@ -85,7 +85,7 @@ docker :: [T.Text] -> Configuration -> Sh T.Text
 docker = flip $ run . fromText . cfgDockerBin
 
 dpull :: ConfigurationImage -> Configuration -> Sh T.Text
-dpull ci = docker ["pull", ciPullRepository ci]
+dpull ci = docker ["pull", ciPullRepository ci  <> ":" <> ciTag ci]
 
 dpush :: ConfigurationImage -> Configuration -> Sh T.Text
 dpush ci cfg = docker ["push", (cfgHub cfg) <> "/" <> ciPushRepository ci] cfg
@@ -106,25 +106,28 @@ main :: IO ()
 main = do
   args <- getArgs
   case args of
-    [config] -> runWith config
-    _        -> usage
+    [config,verbose] -> runWith config (read verbose::Bool)
+    _                -> usage
   where
-    usage = putStrLn "usage\n\thub-update /path/config.json"
-    runWith file = do
-      putStrLn "login ..."
-      config file >>= sh . dlogin
+    usage = putStrLn "Usage\n\thub-update /path/config.json verbose (True||False)\n\nExemple:\n\thub-update /etc/hub.json True"
+    runWith file verbose = do
+      -- putStrLn "login ..."
+      -- config file >>= sh . dlogin
       putStrLn "start pull action ..."
-      config file >>= dockerWith dpull
+      config file >>= dockerWith dpull verbose
       putStrLn "start tag action ..."
-      config file >>= dockerWith dtag
+      config file >>= dockerWith dtag verbose
       putStrLn "start push action ..."
-      config file >>= dockerWith dpush
+      config file >>= dockerWith dpush verbose
       -- shelly $ runHandle (fromText "/run/current-system/sw/bin/docker") dopts (\h-> runResourceT $ CB.sourceHandle h $$ CB.sinkFile "/tmp/d.js")
       -- shelly $ runHandle (fromText "/run/current-system/sw/bin/docker") dopts (\h-> CB.sourceHandle h $$ sinkParser json)
-      pure ()
-    sh = (shelly . silently . print_stderr True)
-    -- sh = (shelly . print_stderr True)
-    dockerWith f = (\cfg -> sh . mapM (\img -> processImgWith f img cfg) $ cfgImages cfg)
+      return ()
+    -- sh = shelly . silently . print_stderr True
+    sh verbose = if verbose then
+           (shelly . print_stderr True)
+         else
+           (shelly . silently . print_stderr True)
+    dockerWith f verbose = (\cfg -> (sh verbose) . mapM (\img -> processImgWith f img cfg) $ cfgImages cfg)
     showException (e::SomeException) = "Ooooups: " <> (T.pack $ show e)
     processImgWith f img cfg = catch_sh (f img cfg) (pure . showException)
     config file = BL.readFile file

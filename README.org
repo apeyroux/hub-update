@@ -26,11 +26,13 @@ proxy of hub.docker.io
 * Usage
 
 #+BEGIN_SRC sh
-hub-update conf/hub-update.json
+hub-update conf/hub-update.json False
+hub-update conf/hub-update.json True
+# hub-update path/config.json verbose
 #+END_SRC
 
 * Cronttab
 
 #+BEGIN_SRC sh
-*/30 * * * * /usr/local/bin/hub-update /etc/hub-update.json
+*/30 * * * * /usr/local/bin/hub-update /etc/hub-update.json False
 #+END_SRC
