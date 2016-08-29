@@ -1,0 +1,17 @@
+{
+    "dockerbin":"/nix/store/4d6gyiiwk76i8gmpwvca3mdll88h2s2x-system-path/bin/docker",
+    "login":"admin",
+    "password":"admin",
+    "hub":"hub.mydomain.com",
+    "images":[
+	{
+	    "pull_repository":"debian",
+	    "tag":"latest",
+	    "push_repository":"hub.mydomain.com/debian"
+	}, {
+	    "pull_repository":"ubuntu",
+	    "tag":"latest",
+	    "push_repository":"hub.mydomain.com/ubuntu"
+	}
+    ]
+}

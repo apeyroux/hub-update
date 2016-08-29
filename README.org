@@ -1,0 +1,36 @@
+Update its local Registry with a remote registry. Used for a local
+proxy of hub.docker.io
+
+* Confuguration
+
+#+BEGIN_SRC json
+{
+    "dockerbin":"/bin/docker",
+    "login":"admin",
+    "password":"admin",
+    "hub":"hub.mydomain.com",
+    "images":[
+	{
+	    "pull_repository":"debian",
+	    "tag":"latest",
+	    "push_repository":"41px/debian"
+	}, {
+	    "pull_repository":"ubuntu",
+	    "tag":"latest",
+	    "push_repository":"41px/ubuntu"
+	}
+    ]
+}
+#+END_SRC
+
+* Usage
+
+#+BEGIN_SRC sh
+hub-update conf/hub-update.json
+#+END_SRC
+
+* Cronttab
+
+#+BEGIN_SRC sh
+*/30 * * * * /usr/local/bin/hub-update /etc/hub-update.json
+#+END_SRC
