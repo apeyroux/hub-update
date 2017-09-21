@@ -109,7 +109,7 @@ main = do
     [config,verbose] -> runWith config (read verbose::Bool)
     _                -> usage
   where
-    usage = putStrLn "Usage\n\thub-update /path/config.json verbose (True||False)\n\nExemple:\n\thub-update /etc/hub.json True"
+    usage = putStrLn "usage\n\thub-update /path/config.json verbose (True||False)\n\nExemple:\n\thub-update /etc/hub.json True"
     runWith file verbose = do
       -- putStrLn "login ..."
       -- config file >>= sh . dlogin
